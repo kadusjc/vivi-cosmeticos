@@ -12,8 +12,12 @@ router
 
   .post('/', async (req, res) => {    
     let customer = req.body
-    customer = await CustomerService.save(customer)    
-    res.json(customer)
+    try {
+      customer = await CustomerService.save(customer)    
+      res.json(customer)
+    } catch (error) {
+      res.status(500).send(error.message)
+    }    
   })
 
 module.exports = router;
