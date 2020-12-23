@@ -1,4 +1,4 @@
-const { get, set } = require('lodash')
+const { get, set, isString } = require('lodash')
 const Customers = require('../model/customers')
 
 const CustomerService = {
@@ -14,12 +14,14 @@ const CustomerService = {
         return customer
     },
 
-    async find (filter = {name: '', phoneNumber: ''}) {
-        const { name, phoneNumber } = filter
+    async find (filter) {
+        let name = get(filter, 'name', '')
+        let phoneNumber = get(filter, 'phoneNumber', '')
+        
         const query = {}
-        if (name) { query['name'] = /name/ }
-        if (phoneNumber) { query['phoneNumber'] = /phoneNumber/ }
-
+        if (name) { query['name'] = { $regex: name, $options: 'i' } } 
+        if (phoneNumber) { query['phoneNumber'] = { $regex: phoneNumber, $options: 'i' } }
+        
         let customers = await Customers.find(query)
         return customers
     }

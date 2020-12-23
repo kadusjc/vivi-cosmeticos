@@ -1,3 +1,4 @@
+const { get } = require('lodash')
 const express = require('express');
 const router = express.Router();
 const CustomerService = require('../services/customer-service')
@@ -5,7 +6,7 @@ const CustomerService = require('../services/customer-service')
 /* GET customers listing. */
 router
   .get('/', async (req, res) => {
-    let filter = req.filter  
+    let filter = req.query    
     let customers = await CustomerService.find(filter)
     res.json(customers)
   })
