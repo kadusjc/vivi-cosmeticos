@@ -11,10 +11,29 @@ const CustomerService = {
         const { name, phoneNumber } = customer 
         let customers = await Customers.find({'$or':[{name: name.toUpperCase()}, {phoneNumber}]})
         if (get(customers, 'length', 0) > 0) {
-            throw new Error('Já consta um usuário no seu cadastro de mesmo NOME ou TELEFONE')
+            throw new Error('Já consta um usuário no seu cadastro de mesmo NOME e/ou TELEFONE')
         }
         set(customer, 'name', get(customer, 'name', '').toUpperCase())
         customer = await Customers.create(customer)
+        return customer
+    },
+
+    async update (customer) {
+        let { _id, name, phoneNumber } = customer 
+        const customerIdString = toString(_id)
+        _id = new ObjectId(customerIdString)
+        
+        let customers = await Customers.find({'$and': [
+            {'_id': {'$ne': _id }}, 
+            {'$or':[{name: name.toUpperCase()}, {phoneNumber}]}
+        ]})
+
+        if (get(customers, 'length', 0) > 0) {
+            throw new Error('Já consta um OUTRO usuário no seu cadastro de mesmo NOME e/ou TELEFONE')
+        }
+        set(customer, 'name', get(customer, 'name', '').toUpperCase())
+        const { preferences } = customer
+        customer = await Customers.findOneAndUpdate({_id}, {$set: { name, phoneNumber, preferences } }, { multi: true })
         return customer
     },
 
@@ -29,6 +48,7 @@ const CustomerService = {
         let customers = await Customers.find(query).sort({name: 1})
         return customers
     },
+    
 
     async remove (id) {
         const customerIdString = toString(id)

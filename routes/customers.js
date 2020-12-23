@@ -20,6 +20,16 @@ router
     }    
   })
 
+  .put('/', async (req, res) => {    
+    let customer = req.body
+    try {
+      customer = await CustomerService.update(customer)    
+      res.json(customer)
+    } catch (error) {
+      res.status(500).send(error.message)
+    }    
+  })
+
   .delete('/:id', async (req, res) => {    
     let { id } = req.params
     try {
