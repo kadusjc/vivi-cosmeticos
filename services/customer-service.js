@@ -1,4 +1,8 @@
-const { get, set, isString } = require('lodash')
+const mongoose = require('mongoose')
+const ObjectId = mongoose.Types.ObjectId
+
+const { get, set, toString } = require('lodash')
+    
 const Customers = require('../model/customers')
 
 const CustomerService = {
@@ -22,8 +26,14 @@ const CustomerService = {
         if (name) { query['name'] = { $regex: name, $options: 'i' } } 
         if (phoneNumber) { query['phoneNumber'] = { $regex: phoneNumber, $options: 'i' } }
         
-        let customers = await Customers.find(query)
+        let customers = await Customers.find(query).sort({name: 1})
         return customers
+    },
+
+    async remove (id) {
+        const customerIdString = toString(id)
+        const customerId = new ObjectId(customerIdString)
+        await Customers.remove({_id: customerId})
     }
 }
 
