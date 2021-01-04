@@ -8,8 +8,12 @@ const Products = require('../model/products')
 const ProductService = {
 
     async save (product) {
-        const { name, brand, category } = product 
-        let products = await Products.find({'$or':[{name: name.toUpperCase()}, {brand, category}]})
+        let { name, brand, category } = product 
+        name = name.toUpperCase()
+        brand = brand.toUpperCase()
+        category = category.toUpperCase()
+        
+        let products = await Products.find({'$or':[{name}, {brand, category}]})
         if (get(products, 'length', 0) > 0) {
             throw new Error('Já consta um PRODUTO no seu cadastro de mesmo NOME para esta MARCA e CATEGORIA')
         }
@@ -20,12 +24,16 @@ const ProductService = {
 
     async update (product) {
         let { _id, name, brand, category, volume } = product 
+        name = name.toUpperCase()
+        brand = brand.toUpperCase()
+        category = category.toUpperCase()
+
         const productIdString = toString(_id)
         _id = new ObjectId(productIdString)
         
         let products = await Products.find({'$and': [
             {'_id': {'$ne': _id }}, 
-            {'$or':[{name: name.toUpperCase()}, {brand, category}]}
+            {'$or':[{name}, {brand, category}]}
         ]})
 
         if (get(products, 'length', 0) > 0) {
@@ -37,9 +45,9 @@ const ProductService = {
     },
 
     async find (filter) {
-        let name = get(filter, 'name', '')
-        let category = get(filter, 'category', '')
-        let brand = get(filter, 'brand', '')
+        let name = get(filter, 'name', '').toUpperCase()
+        let category = get(filter, 'category', '').toUpperCase()
+        let brand = get(filter, 'brand', '').toUpperCase()
         
         const query = {}
         if (name) { query['name'] = { $regex: name, $options: 'i' } } 
