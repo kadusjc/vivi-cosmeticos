@@ -12,12 +12,14 @@ const ProductService = {
         name = name.toUpperCase()
         brand = brand.toUpperCase()
         category = category.toUpperCase()
-        
+
         let products = await Products.find({'$or':[{name}, {brand, category}]})
         if (get(products, 'length', 0) > 0) {
             throw new Error('Já consta um PRODUTO no seu cadastro de mesmo NOME para esta MARCA e CATEGORIA')
         }
         set(product, 'name', get(product, 'name', '').toUpperCase())
+        set(product, 'brand', get(product, 'brand', '').toUpperCase())
+        set(product, 'category', get(product, 'category', '').toUpperCase())
         product = await Products.create(product)
         return product
     },
@@ -40,6 +42,9 @@ const ProductService = {
             throw new Error('Já consta um OUTRO produto no seu cadastro de mesmo NOME para esta MARCA e CATEGORIA')
         }
         set(product, 'name', get(product, 'name', '').toUpperCase())
+        set(product, 'brand', get(product, 'brand', '').toUpperCase())
+        set(product, 'category', get(product, 'category', '').toUpperCase())
+        
         product = await Products.findOneAndUpdate({_id}, {$set: { name, brand, category, volume } }, { multi: true })
         return product
     },
