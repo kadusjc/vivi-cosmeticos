@@ -13,7 +13,7 @@ const ProductService = {
         brand = brand.toUpperCase()
         category = category.toUpperCase()
 
-        let products = await Products.find({'$or':[{name}, {brand, category}]})
+        let products = await Products.find({name, brand, category})
         if (get(products, 'length', 0) > 0) {
             throw new Error('Já consta um PRODUTO no seu cadastro de mesmo NOME para esta MARCA e CATEGORIA')
         }
@@ -34,8 +34,7 @@ const ProductService = {
         _id = new ObjectId(productIdString)
         
         let products = await Products.find({'$and': [
-            {'_id': {'$ne': _id }}, 
-            {'$or':[{name}, {brand, category}]}
+            {'_id': {'$ne': _id }, name, brand, category}
         ]})
 
         if (get(products, 'length', 0) > 0) {
