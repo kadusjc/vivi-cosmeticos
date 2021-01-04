@@ -20,12 +20,14 @@ const CustomerService = {
 
     async update (customer) {
         let { _id, name, phoneNumber } = customer 
+        name = name.toUpperCase()
+
         const customerIdString = toString(_id)
         _id = new ObjectId(customerIdString)
         
         let customers = await Customers.find({'$and': [
             {'_id': {'$ne': _id }}, 
-            {'$or':[{name: name.toUpperCase()}, {phoneNumber}]}
+            {'$or':[{name}, {phoneNumber}]}
         ]})
 
         if (get(customers, 'length', 0) > 0) {
