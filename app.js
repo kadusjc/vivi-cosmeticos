@@ -7,6 +7,7 @@ const bodyParser = require('body-parser')
 const db = require('./model/db')
 const routes = require('./routes/index')
 const customers = require('./routes/customers');
+const products = require('./routes/products');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use(cookieParser());
 
 app.use('/', routes);
 app.use('/customers', customers)
+app.use('/products', products)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
